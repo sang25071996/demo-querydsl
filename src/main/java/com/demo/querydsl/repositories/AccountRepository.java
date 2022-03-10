@@ -2,6 +2,7 @@ package com.demo.querydsl.repositories;
 
 import com.demo.querydsl.domains.Account;
 import com.demo.querydsl.domains.QAccount;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -15,8 +16,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer>,
 
   @Override
   default void customize(QuerydslBindings bindings, QAccount qAccount) {
-    bindings.bind(qAccount.email).first((path, value) -> path.contains(value));
-    bindings.bind(qAccount.username).first(((path, value) -> path.contains(value)));
+    bindings.bind(qAccount.email).first(StringExpression::contains);
+    bindings.bind(qAccount.username).first((StringExpression::contains));
     bindings.bind(String.class).first((StringPath path, String value) -> {
       if (value.equalsIgnoreCase("empty")) {
         return path.isEmpty();
